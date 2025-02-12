@@ -60,7 +60,7 @@ int main()
 	Shader myShader("shaderCode/myShader.vs", "shaderCode/myShader.fs");
 	float vertices[9][7] = {
 		//position						//color
-	{ 0.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f },
+	{ 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f },
 	//1,2
 	{ 0.0f, 0.8f, 1.0f,		0.0f, 0.1f, 0.2f, 1.0f },
 	{ 0.4f, 0.0f, 1.0f,		0.3f, 0.4f, 0.5f, 1.0f },
@@ -102,18 +102,22 @@ int main()
 		processInput(window);
 
 		float timeValue = glfwGetTime();
-		vertices[0][0] = 0.3 * cos(-5 * timeValue) / 2 - 0.5;
-		vertices[0][1] = 0.3 * sin(-5 * timeValue) / 2 + 0.5;
 
-		vertices[1][0] = 0.8 * cos(-timeValue + M_PI / 2) / 2 - 0.5;
-		vertices[1][1] = 0.8 * sin(-timeValue + M_PI / 2) / 2 + 0.5;
-		vertices[3][0] = 0.8 * cos(-timeValue) / 2 - 0.5;
-		vertices[3][1] = 0.8 * sin(-timeValue) / 2 + 0.5;
-		vertices[5][0] = 0.8 * cos(-timeValue - M_PI / 2) / 2 - 0.5;
-		vertices[5][1] = 0.8 * sin(-timeValue - M_PI / 2) / 2 + 0.5;
-		vertices[7][0] = 0.8 * cos(-timeValue + M_PI) / 2 - 0.5;
-		vertices[7][1] = 0.8 * sin(-timeValue + M_PI) / 2 + 0.5;
+		//first
+		float xOffSet = 0.6 * cos(1.1 * timeValue);
+		float yOffSet = 0.6 * sin(1.1 * timeValue);
 
+		vertices[0][0] = 0.3 * cos(-5 * timeValue) / 2 + xOffSet;
+		vertices[0][1] = 0.3 * sin(-5 * timeValue) / 2 + yOffSet;
+
+		vertices[1][0] = 0.8 * cos(-timeValue + M_PI / 2) / 2 + xOffSet;
+		vertices[1][1] = 0.8 * sin(-timeValue + M_PI / 2) / 2 + yOffSet;
+		vertices[3][0] = 0.8 * cos(-timeValue) / 2 + xOffSet;
+		vertices[3][1] = 0.8 * sin(-timeValue) / 2 + yOffSet;
+		vertices[5][0] = 0.8 * cos(-timeValue - M_PI / 2) / 2 + xOffSet;
+		vertices[5][1] = 0.8 * sin(-timeValue - M_PI / 2) / 2 + yOffSet;
+		vertices[7][0] = 0.8 * cos(-timeValue + M_PI) / 2 + xOffSet;
+		vertices[7][1] = 0.8 * sin(-timeValue + M_PI) / 2 + yOffSet;
 
 		vertices[2][0] = 0.5 * vertices[0][0] + 0.5 * vertices[3][0];
 		vertices[2][1] = 0.5 * vertices[0][1] + 0.5 * vertices[3][1];
@@ -122,8 +126,13 @@ int main()
 		vertices[6][0] = 0.5 * vertices[0][0] + 0.5 * vertices[7][0];
 		vertices[6][1] = 0.5 * vertices[0][1] + 0.5 * vertices[7][1];
 		vertices[8][0] = 0.5 * vertices[0][0] + 0.5 * vertices[1][0];
-		vertices[8][1] = 0.5 * vertices[0][1] + 0.5 * vertices[1][1];
-				
+		vertices[8][1] = 0.5 * vertices[0][1] + 0.5 * vertices[1][1];				
+
+		myShader.set4Float("bColor", 
+			0.5 * sin(3 * timeValue) + 0.5, 
+			0.5 * cos(4 *timeValue), 
+			0.5 * cos(5 * timeValue + M_PI) + 0.5, 
+			1.0f);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STREAM_DRAW);
@@ -135,6 +144,46 @@ int main()
 		myShader.use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+		//second
+		xOffSet = 0.6 * cos(-1.1 * timeValue);
+		yOffSet = 0.6 * sin(-1.1 * timeValue);
+
+		vertices[0][0] = 0.3 * cos(-5 * timeValue) / 2 + xOffSet;
+		vertices[0][1] = 0.3 * sin(-5 * timeValue) / 2 + yOffSet;
+
+		vertices[1][0] = 0.8 * cos(timeValue + M_PI / 2) / 2 + xOffSet;
+		vertices[1][1] = 0.8 * sin(timeValue + M_PI / 2) / 2 + yOffSet;
+		vertices[3][0] = 0.8 * cos(timeValue) / 2 + xOffSet;
+		vertices[3][1] = 0.8 * sin(timeValue) / 2 + yOffSet;
+		vertices[5][0] = 0.8 * cos(timeValue - M_PI / 2) / 2 + xOffSet;
+		vertices[5][1] = 0.8 * sin(timeValue - M_PI / 2) / 2 + yOffSet;
+		vertices[7][0] = 0.8 * cos(timeValue + M_PI) / 2 + xOffSet;
+		vertices[7][1] = 0.8 * sin(timeValue + M_PI) / 2 + yOffSet;
+
+		vertices[2][0] = 0.5 * vertices[0][0] + 0.5 * vertices[3][0];
+		vertices[2][1] = 0.5 * vertices[0][1] + 0.5 * vertices[3][1];
+		vertices[4][0] = 0.5 * vertices[0][0] + 0.5 * vertices[5][0];
+		vertices[4][1] = 0.5 * vertices[0][1] + 0.5 * vertices[5][1];
+		vertices[6][0] = 0.5 * vertices[0][0] + 0.5 * vertices[7][0];
+		vertices[6][1] = 0.5 * vertices[0][1] + 0.5 * vertices[7][1];
+		vertices[8][0] = 0.5 * vertices[0][0] + 0.5 * vertices[1][0];
+		vertices[8][1] = 0.5 * vertices[0][1] + 0.5 * vertices[1][1];
+
+		myShader.set4Float("bColor",
+			0.5 * sin(-5 * timeValue) + 0.5,
+			0.5 * cos(-4 * timeValue),
+			0.5 * cos(-3 * timeValue + M_PI) + 0.5,
+			1.0f);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STREAM_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		myShader.use();
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
