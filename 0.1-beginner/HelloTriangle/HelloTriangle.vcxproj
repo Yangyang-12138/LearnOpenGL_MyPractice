@@ -75,14 +75,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLFW\include;D:\projects\LearnOpenGL\HelloTriangle\dependence\GLAD\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLAD\src;$(SourcePath)</SourcePath>
+    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLFW\include;D:\projects\LearnOpenGL\0.1-beginner\Shader\dependence\GLAD\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLAD\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLFW\include;D:\projects\LearnOpenGL\HelloTriangle\dependence\GLAD\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\HelloTriangle\dependence\GLAD\src;$(SourcePath)</SourcePath>
+    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLAD\include;D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLFW\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\HelloTriangle\dependence\GLAD\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
