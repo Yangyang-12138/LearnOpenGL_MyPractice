@@ -63,7 +63,7 @@ int main()
     Shader myShader("./shaderCode/camera.vs", "./shaderCode/camera.fs");
 
     float vertices[36][5] = {
-        //location       //texture
+            //location       //texture
   //dice-1        
         {-0.5, -0.5, 0.5,     0.0, 0.0},
         {0.5, -0.5, 0.5,      1.0, 0.0},
@@ -142,6 +142,9 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    unsigned int axisVBO;
+    glGenBuffers(1, &axisVBO);
+
     unsigned int texture[6];
     glGenTextures(6, &texture[0]);
     for (int i = 0; i < sizeof(texture) / sizeof(texture[0]); i++)
@@ -153,7 +156,8 @@ int main()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         int width, height, nrChannels;
         stbi_set_flip_vertically_on_load(true);
-        unsigned char* data = stbi_load(std::string("./textureImg/dice-" + std::to_string(i + 1) + ".png").c_str(), &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load(std::string("./textureImg/dice-" + std::to_string(i + 1) + ".png").c_str(),
+            &width, &height, &nrChannels, 0);
         if (data)
         {
             unsigned int format;
@@ -177,7 +181,9 @@ int main()
         }
         else
         {
-            std::cout << "Failed to load texture" << std::endl;
+            std::cout << "Failed to load texture:"
+                << std::string("./textureImg/dice-" + std::to_string(i + 1) + ".png").c_str()
+                << std::endl;
         }
         stbi_image_free(data);
 
@@ -198,7 +204,9 @@ int main()
 
         myShader.use();
 
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
+            (float)SCR_WIDTH / (float)SCR_HEIGHT, 
+            0.1f, 100.0f);
         myShader.setMat4("projection", projection);
         glm::mat4 view = camera.GetViewMatrix();
         myShader.setMat4("view", view);
@@ -210,10 +218,15 @@ int main()
             model = glm::translate(model, cubePosition[i]);
             float angle = 50.0f * i + 16.7;
             model = glm::rotate(model, 
-                (float)glfwGetTime() * glm::radians(angle) / (i + 1), 
-                glm::vec3(0.5 * i * glfwGetTime(), 0.6 * i * glfwGetTime(), 0.7 * i));
+                (float)glfwGetTime() * glm::radians(angle) * 5 / (i + 1), 
+                glm::vec3(0.5 * sin(glfwGetTime()) + i, 
+                    3.66 * i * cos(glfwGetTime()) / 100.0, 
+                    1.7 * i));
             myShader.setMat4("model", model);
 
+            //draw cubes
+            myShader.setBool("isAxisPoint", GL_FALSE);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
             for (int j = 0; j < sizeof(texture) / sizeof(texture[0]); j++)
             {
                 myShader.setInt("texture0", j);
@@ -224,6 +237,10 @@ int main()
                 }
                 glDrawArrays(GL_TRIANGLES, 6 * j, 6);
             }
+
+            //draw the axis of rotation
+            myShader.setBool("isAxisPoint", GL_TRUE);
+
         }
         glfwSwapBuffers(window);
         glfwPollEvents();

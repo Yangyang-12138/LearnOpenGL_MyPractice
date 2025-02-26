@@ -81,13 +81,13 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 void Camera::ProcessMouseScroll(float yoffset)
 {
 	Zoom -= (float)yoffset;
-	if (Zoom < 1.0)
+	if (Zoom < 0.001)
 	{
-		Zoom = 1.0;
+		Zoom = 0.001;
 	}
-	if (Zoom > 45.0)
+	if (Zoom > 89.9990)
 	{
-		Zoom = 45.0;
+		Zoom = 89.999;
 	}
 }
 
