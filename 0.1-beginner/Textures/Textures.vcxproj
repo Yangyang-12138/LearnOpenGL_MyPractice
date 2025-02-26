@@ -33,6 +33,7 @@
     <ProjectGuid>{0b46a19c-d576-4c8d-8719-da2b9a4288d6}</ProjectGuid>
     <RootNamespace>Textrues</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Textures</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,14 +81,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\include;D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLFW\include;D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLAD\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLAD\src;$(SourcePath)</SourcePath>
+    <IncludePath>.\include;.\dependence\GLFW\include;.\dependence\GLAD\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>.\dependence\GLAD\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\include;D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLFW\include;D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLAD\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\Textrues\dependence\GLAD\src;$(SourcePath)</SourcePath>
+    <IncludePath>.\include;.\dependence\GLFW\include;.\dependence\GLAD\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>.\dependence\GLAD\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
