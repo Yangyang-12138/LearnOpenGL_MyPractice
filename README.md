@@ -6,14 +6,14 @@
 
 ---
 
-**HelloTriangle**
+**0.1.1-HelloTriangle**
 
 ![实现效果](./img/HelloTriangle.gif "效果")
 
-**Shader**
+**0.1.2-Shader**
 
 ![实现效果](./img/Shader.gif "效果")
 
-**CoordSys**
+**0.1.5-CoordSys**
 
 ![实现效果](./img/CoordSys.gif "效果")
