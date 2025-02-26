@@ -2,6 +2,6 @@
 # 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
 ################################################################################
 
-/HelloTriangle/.vs/HelloTriangle
-/HelloTriangle/HelloTriangle/x64
-/HelloTriangle/x64
+ *.vcxproj.user
+.vs/
+x64/
