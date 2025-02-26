@@ -171,9 +171,8 @@ int main()
         }
         stbi_image_free(data);
     }
-    myShader.use();
-    myShader.setInt("texture0", 0);
-    myShader.setInt("texture1", 1);
+    //myShader.use();
+    //myShader.setInt("texture0", 0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -190,7 +189,8 @@ int main()
         glm::mat4 view = glm::mat4(1.0);
         glm::mat4 projection = glm::mat4(1.0);
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        view = glm::translate(view, glm::vec3(0.0, 0.0, -3.0));
+        view = glm::translate(view, glm::vec3(0.0, 0.0, -10.0));
+        view = glm::rotate(view, (float)glm::radians(90.0), glm::vec3(1.0, 1.5, 2.0));
         myShader.set4Mat("projection", projection);
         myShader.set4Mat("view", view);
 
@@ -199,8 +199,8 @@ int main()
         {
             glm::mat4 model = glm::mat4(1.0);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0 * i;
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0, 0.3, 0.5));
+            float angle = 13.1 * i + 11.7;
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0 - i * 1.7, i * 2.0 + 0.3, 3.5 * i));
             myShader.set4Mat("model", model);
             for (int j = 0; j < 6; j++)
             {
@@ -219,6 +219,7 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    std::cout << "Window size :" << width << "×" << height << std::endl;
     glViewport(0, 0, width, height);
 }
 

@@ -79,14 +79,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLAD\include;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLFW\include;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLAD\src;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\source;$(SourcePath)</SourcePath>
+    <IncludePath>.\dependence\GLAD\include;.\dependence\GLFW\include;.\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>.\dependence\GLAD\src;.\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLAD\include;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLFW\include;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\projects\LearnOpenGL\0.1-beginner\CoordSys\dependence\GLAD\src;D:\projects\LearnOpenGL\0.1-beginner\CoordSys\source;$(SourcePath)</SourcePath>
+    <IncludePath>.\dependence\GLAD\include;.\dependence\GLFW\include;.\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\dependence\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>.\dependence\GLAD\src;.\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
