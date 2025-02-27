@@ -17,3 +17,7 @@
 **0.1.5-CoordSys**
 
 ![实现效果](./img/CoordSys.gif "效果")
+
+**0.1.6-Camera**
+
+![实现效果](./img/Camera.gif "效果")
