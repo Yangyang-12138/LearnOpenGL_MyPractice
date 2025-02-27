@@ -119,6 +119,15 @@ int main()
         {0.5, -0.5, -0.5,     0.0, 0.0}
     };
 
+    float axisVertices[6][3] = {
+        {-1.0, 0.0, 0.0},
+        {1.0, 0.0, 0.0},
+        {0.0, -1.0, 0.0},
+        {0.0, 1.0, 0.0},
+        {0.0, 0.0, -1.0},
+        {0.0, 0.0, 1.0}
+    };
+
     glm::vec3 cubePosition[10] = {
         glm::vec3(0.0, 0.0, 10.0),
         glm::vec3(1.1, 1.3, -10.0),
@@ -136,14 +145,13 @@ int main()
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) + sizeof(axisVertices) + 6 * sizeof(float), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices), sizeof(axisVertices), axisVertices);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    unsigned int axisVBO;
-    glGenBuffers(1, &axisVBO);
 
     unsigned int texture[6];
     glGenTextures(6, &texture[0]);
@@ -219,14 +227,14 @@ int main()
             float angle = 50.0f * i + 16.7;
             model = glm::rotate(model, 
                 (float)glfwGetTime() * glm::radians(angle) * 5 / (i + 1), 
-                glm::vec3(0.5 * sin(glfwGetTime()) + i, 
-                    3.66 * i * cos(glfwGetTime()) / 100.0, 
-                    1.7 * i));
+                glm::vec3(1.0, -2.0, 10.0 * i * sin(i * glfwGetTime() / 5)));
             myShader.setMat4("model", model);
 
             //draw cubes
             myShader.setBool("isAxisPoint", GL_FALSE);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(1);
             for (int j = 0; j < sizeof(texture) / sizeof(texture[0]); j++)
             {
                 myShader.setInt("texture0", j);
@@ -238,10 +246,47 @@ int main()
                 glDrawArrays(GL_TRIANGLES, 6 * j, 6);
             }
 
-            //draw the axis of rotation
             myShader.setBool("isAxisPoint", GL_TRUE);
+            //draw the axis of model
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)sizeof(vertices));
+            glDisableVertexAttribArray(1);
+            glLineWidth(3.3);
+            glDrawArrays(GL_LINES, 0, 6);
 
+            //draw the axis of rotation
+            glm::vec3 center = cubePosition[i];
+            glm::vec3 fff = glm::vec3(1.0, -2.0, 10.0 * i * sin(i * glfwGetTime() / 5));
+            glm::vec3 axisP0 = center + glm::normalize(fff);
+            glm::vec3 axisP1 = center - glm::normalize(fff);
+            float rotationVertices[2][3] =
+            {
+                {axisP0.x, axisP0.y, axisP0.z},
+                {axisP1.x, axisP1.y, axisP1.z}
+            };
+            glBufferSubData(GL_ARRAY_BUFFER, 
+                sizeof(vertices) + sizeof(axisVertices), 
+                sizeof(rotationVertices), 
+                rotationVertices);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 
+                3 * sizeof(float), 
+                (void*)(sizeof(vertices) + sizeof(axisVertices)));
+            model = glm::mat4(1.0);
+            myShader.setMat4("model", model);
+            glLineWidth(8.8);
+            glDrawArrays(GL_LINES, 0, 2);
         }
+
+        //draw the world axes
+        glm::mat4 modelWorld = glm::mat4(1.0);
+        modelWorld = glm::scale(modelWorld, glm::vec3(3.0));
+        myShader.setMat4("model", modelWorld);
+        myShader.setBool("isAxisPoint", GL_TRUE);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)sizeof(vertices));
+        glDisableVertexAttribArray(1);
+        glLineWidth(5.5);
+        glDrawArrays(GL_LINES, 0, 6);
+        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
