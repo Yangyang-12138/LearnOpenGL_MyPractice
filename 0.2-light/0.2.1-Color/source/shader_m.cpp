@@ -26,11 +26,11 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	const char* fShaderCode = fragmentCode.c_str();
 	unsigned int vertex, fragment;
 	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(GL_VERTEX_SHADER, 1, &vShaderCode, NULL);
+	glShaderSource(vertex, 1, &vShaderCode, NULL);
 	glCompileShader(vertex);
 	checkCompileErrors(vertex, "VERTEX");
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(GL_FRAGMENT_SHADER, 1, &fShaderCode, NULL);
+	glShaderSource(fragment, 1, &fShaderCode, NULL);
 	glCompileShader(fragment);
 	checkCompileErrors(fragment, "FRAGMENT");
 
