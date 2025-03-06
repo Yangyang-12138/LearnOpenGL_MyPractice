@@ -21,3 +21,11 @@
 **0.1.6-Camera**
 
 ![实现效果](./img/Camera.gif "效果")
+
+
+
+
+
+**0.2.2-BasicLighting**
+
+![](./img/BasicLighting.gif "效果")
