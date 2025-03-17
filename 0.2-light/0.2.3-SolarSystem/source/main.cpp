@@ -139,15 +139,15 @@ int main()
     glBindVertexArray(lampVAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     glBindVertexArray(cubeVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -158,7 +158,11 @@ int main()
         processInput(window);
 
         glClearColor(0.75, 0.75, 0.75, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		lightPos.x = sin(5 * glfwGetTime()) * 2.0;
+		lightPos.y = sin(7 * glfwGetTime() / 2.0) * 2.0;
+		lightPos.z = cos(9 * glfwGetTime()) * 2.0;
 
         cubeShader.use();
         cubeShader.setVec3("objectColor", objectColor);;
@@ -166,14 +170,19 @@ int main()
         cubeShader.setVec3("lightPos", lightPos);
         cubeShader.setVec3("viewPos", camera.Position);
 
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.001f, 99.999f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0);
+
+        cubeShader.setMat4("projection", projection);
+        cubeShader.setMat4("view", view);
+        cubeShader.setMat4("model", model);
 
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         lampShader.use();
+        lampShader.setVec3("lightColor", lightColor);
         model = glm::mat4(1.0);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.1));
@@ -211,7 +220,7 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         lastY = ypos;
         firstMouse = false;
     }
-    float xOffset = xpos = lastX;
+    float xOffset = xpos - lastX;
     float yOffset = lastY - ypos;
     lastX = xpos;
     lastY = ypos;
@@ -241,11 +250,11 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.ProcessKeyboard(LEFT, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
