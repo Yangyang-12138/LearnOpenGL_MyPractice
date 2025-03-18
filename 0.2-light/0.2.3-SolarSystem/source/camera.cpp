@@ -75,9 +75,10 @@ void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constr
 	updateCameraVectors();
 }
 
-void Camera::ProcessMouseScroll(float yOffset)
+void Camera::ProcessMouseScroll(float xOffset, float yOffset)
 {
 	Zoom -= yOffset;
+	Zoom -= xOffset;
 	if (Zoom < 0.001)
 	{
 		Zoom = 0.001;

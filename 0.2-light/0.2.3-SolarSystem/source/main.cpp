@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <vector>
 
 #include "shader.h"
 #include "camera.h"
@@ -13,10 +14,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
+std::vector<int> genBallVertices(unsigned int nLon, unsigned int nLat);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -29,8 +34,7 @@ bool firstMouse = true;
 float deltaTime = 0.0;
 float lastFrame = 0.0;
 
-glm::vec3 objectColor = glm::vec3(0.22, 0.33, 0.44);
-glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.9);
+glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
 glm::vec3 lightPos(1.2, 1.0, 2.0);
 
 int main()
@@ -149,6 +153,50 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    unsigned int textures[6];
+    glGenTextures(6, textures);
+    for (int i = 0; i < sizeof(textures) / sizeof(textures[0]); i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        int img_width, img_height, nrChannels;
+        stbi_set_flip_vertically_on_load(true);
+        unsigned char* data = stbi_load(
+            ("../../textures/cube/dice_black-" + std::to_string(i + 1) + (".jpeg")).c_str(), 
+            &img_width, &img_height, &nrChannels, 0);
+        if (data)
+        {
+            unsigned int format = NULL;
+            switch (nrChannels)
+            {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+            default:
+                format = GL_RGB;
+                break;
+            }
+            glTexImage2D(GL_TEXTURE_2D, 0, format, img_width, img_height, 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture:" 
+                << ("../../textures/cube/dice_black-" + std::to_string(i + 1) + (".jpeg")).c_str() 
+                << std::endl;
+        }
+    }
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -157,15 +205,14 @@ int main()
 
         processInput(window);
 
-        glClearColor(0.75, 0.75, 0.75, 1.0);
+        glClearColor(0.1, 0.1, 0.1, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		lightPos.x = sin(5 * glfwGetTime()) * 2.0;
-		lightPos.y = sin(7 * glfwGetTime() / 2.0) * 2.0;
-		lightPos.z = cos(9 * glfwGetTime()) * 2.0;
+		lightPos.x = sin(1.3 * glfwGetTime()) * 2.0;
+		lightPos.y = sin(1.5 * glfwGetTime()) * 2.0;
+		lightPos.z = cos(1.7 * glfwGetTime()) * 2.0;
 
         cubeShader.use();
-        cubeShader.setVec3("objectColor", objectColor);;
         cubeShader.setVec3("lightColor", lightColor);
         cubeShader.setVec3("lightPos", lightPos);
         cubeShader.setVec3("viewPos", camera.Position);
@@ -179,7 +226,14 @@ int main()
         cubeShader.setMat4("model", model);
 
         glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        for (int j = 0; j < sizeof(textures) / sizeof(textures[0]); j++)
+        {
+            glActiveTexture(GL_TEXTURE0 + j);
+            glBindTexture(GL_TEXTURE_2D, textures[j]);
+            cubeShader.setInt("nTexture", j);
+            glDrawArrays(GL_TRIANGLES, j * 6, 6);
+        }
 
         lampShader.use();
         lampShader.setVec3("lightColor", lightColor);
@@ -230,11 +284,7 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
 {
-    if (xOffset != 0)
-    {
-        std::cout << "xOffset=" << xOffset << std::endl;
-    }
-    camera.ProcessMouseScroll(yOffset);
+    camera.ProcessMouseScroll(xOffset, yOffset);
 }
 
 void processInput(GLFWwindow* window)
@@ -260,6 +310,13 @@ void processInput(GLFWwindow* window)
     {
         camera.ProcessKeyboard(RIGHT, deltaTime);
     }
+}
+
+
+//根据输入的经纬度分段数生成相应数量的球体顶点坐标位置数组
+std::vector<int> genBallVertices(unsigned int nLon, unsigned int nLat)
+{
+
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
