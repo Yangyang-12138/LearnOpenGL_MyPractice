@@ -21,7 +21,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
-std::vector<int> genBallVertices(unsigned int nLon, unsigned int nLat);
+std::vector<glm::vec3> genBallVertices(unsigned int nLon, unsigned int nLat);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -312,11 +312,20 @@ void processInput(GLFWwindow* window)
     }
 }
 
-
-//根据输入的经纬度分段数生成相应数量的球体顶点坐标位置数组
-std::vector<int> genBallVertices(unsigned int nLon, unsigned int nLat)
+std::vector<glm::vec3> genBallVertices(unsigned int nLon, unsigned int nLat)
 {
+	std::vector<glm::vec3> vertices;
+	vertices.push_back(glm::vec3(0.0, 1.0, 0.0));
 
+    for (int i = 0; i < nLon; i++)
+    {
+        for (int j = 0; j < nLat; j++)
+        {
+
+        }
+    }
+
+    return vertices;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
