@@ -315,7 +315,6 @@ void processInput(GLFWwindow* window)
 std::vector<glm::vec3> genBallVertices(unsigned int nLon, unsigned int nLat)
 {
 	std::vector<glm::vec3> vertices;
-	vertices.push_back(glm::vec3(0.0, 1.0, 0.0));
 
     for (int i = 0; i < nLon; i++)
     {
