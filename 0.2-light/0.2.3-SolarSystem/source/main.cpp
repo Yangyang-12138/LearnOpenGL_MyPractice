@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 #include "shader.h"
 #include "camera.h"
@@ -16,12 +17,14 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
-std::vector<glm::vec3> genBallVertices(unsigned int nLon, unsigned int nLat);
+std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -197,6 +200,19 @@ int main()
         }
     }
 
+
+    Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
+    std::vector<glm::vec3> ballVertices = genBallVertices(5, 5);
+    unsigned int ballVAO, ballVBO;
+    glGenVertexArrays(1, &ballVAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(ballVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, ballVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(ballVertices), ballVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -312,15 +328,23 @@ void processInput(GLFWwindow* window)
     }
 }
 
-std::vector<glm::vec3> genBallVertices(unsigned int nLon, unsigned int nLat)
+std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments)
 {
 	std::vector<glm::vec3> vertices;
+    std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2);
 
-    for (int i = 0; i < nLon; i++)
+    float lonTheta, latPhi;
+
+    for (int iLat = 0; iLat <= nLatSegments; iLat++)
     {
-        for (int j = 0; j < nLat; j++)
+        latPhi = iLat * M_PI / nLatSegments - M_PI / 2;
+        for (int iLat = 0; iLat <= nLonSegments; iLat++)
         {
-
+            lonTheta = 2 * iLat * M_PI / nLonSegments;
+            float x = cos(latPhi) * sin(lonTheta);
+            float y = sin(latPhi);
+            float z = cos(latPhi) * cos(lonTheta);
+            vertices.push_back(glm::vec3(x, y, z));
         }
     }
 
