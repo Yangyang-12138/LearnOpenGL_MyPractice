@@ -25,6 +25,7 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
 std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments);
+std::vector<unsigned int> genBallIndices(unsigned int nLonSegments, unsigned int nLatSegments);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -202,13 +203,18 @@ int main()
 
 
     Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
-    std::vector<glm::vec3> ballVertices = genBallVertices(5, 5);
-    unsigned int ballVAO, ballVBO;
+    std::vector<glm::vec3> ballVertices = genBallVertices(35, 35);
+    std::vector<unsigned int> ballIndices = genBallIndices(35, 35);
+    genBallIndices(5, 5);
+    unsigned int ballVAO, ballVBO, ballEBO;
     glGenVertexArrays(1, &ballVAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &ballVBO);
+    glGenBuffers(1, &ballEBO);
     glBindVertexArray(ballVAO);
     glBindBuffer(GL_ARRAY_BUFFER, ballVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ballVertices), ballVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)* ballVertices.size(), ballVertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ballEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* ballIndices.size(), ballIndices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -236,6 +242,7 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0);
+        model = glm::scale(model, glm::vec3(0.1));
 
         cubeShader.setMat4("projection", projection);
         cubeShader.setMat4("view", view);
@@ -263,12 +270,25 @@ int main()
         glBindVertexArray(lampVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        ballShader.use();
+        model = glm::mat4(1.0);
+        model = glm::translate(model, glm::vec3(1, 3, 1));
+        model = glm::scale(model, glm::vec3(0.7));
+        ballShader.setMat4("projection", projection);
+        ballShader.setMat4("view", view);
+        ballShader.setMat4("model", model);
+        glBindVertexArray(ballVAO);
+        glDrawElements(GL_TRIANGLES, ballIndices.size(), GL_UNSIGNED_INT, 0);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &lampVAO);
     glDeleteVertexArrays(1, &cubeVAO);
+    glDeleteVertexArrays(1, &ballVAO);
+    glDeleteBuffers(1, &ballEBO);
+    glDeleteBuffers(1, &ballVBO);
     glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
@@ -338,9 +358,9 @@ std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int n
     for (int iLat = 0; iLat <= nLatSegments; iLat++)
     {
         latPhi = iLat * M_PI / nLatSegments - M_PI / 2;
-        for (int iLat = 0; iLat <= nLonSegments; iLat++)
+        for (int iLon = 0; iLon <= nLonSegments; iLon++)
         {
-            lonTheta = 2 * iLat * M_PI / nLonSegments;
+            lonTheta = 2 * iLon * M_PI / nLonSegments;
             float x = cos(latPhi) * sin(lonTheta);
             float y = sin(latPhi);
             float z = cos(latPhi) * cos(lonTheta);
@@ -349,6 +369,27 @@ std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int n
     }
 
     return vertices;
+}
+
+std::vector<unsigned int> genBallIndices(unsigned int nLonSegments, unsigned int nLatSegments)
+{
+    std::vector<unsigned int> indices;
+
+    for (int iLat = 0; iLat < nLatSegments; iLat++)
+    {
+        for (int iLon = 0; iLon < nLonSegments; iLon++)
+        {
+            indices.push_back(iLat * (nLonSegments + 1) + iLon);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
+
+            indices.push_back(iLat * (nLonSegments + 1) + iLon);
+            indices.push_back(iLat * (nLonSegments + 1) + iLon + 1);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
+        }
+    }
+
+    return indices;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
