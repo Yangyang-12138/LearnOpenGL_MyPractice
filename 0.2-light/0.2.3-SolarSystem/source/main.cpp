@@ -20,12 +20,18 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+struct BallVertex {
+    glm::vec3 vertexPos;
+    glm::vec3 normal;
+    glm::vec2 texturePos;
+};
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
-std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments);
-std::vector<unsigned int> genBallIndices(unsigned int nLonSegments, unsigned int nLatSegments);
+std::vector<BallVertex> genBallVertices(unsigned int nLonSegments = 8, unsigned int nLatSegments = 8, float radius = 1);
+std::vector<unsigned int> genBallIndices(unsigned int nLonSegments = 8, unsigned int nLatSegments = 8);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -203,8 +209,8 @@ int main()
 
 
     Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
-    std::vector<glm::vec3> ballVertices = genBallVertices(35, 35);
-    std::vector<unsigned int> ballIndices = genBallIndices(35, 35);
+    std::vector<BallVertex> ballVertices = genBallVertices(128, 128, 1.5);
+    std::vector<unsigned int> ballIndices = genBallIndices(128, 128);
     genBallIndices(5, 5);
     unsigned int ballVAO, ballVBO, ballEBO;
     glGenVertexArrays(1, &ballVAO);
@@ -212,11 +218,13 @@ int main()
     glGenBuffers(1, &ballEBO);
     glBindVertexArray(ballVAO);
     glBindBuffer(GL_ARRAY_BUFFER, ballVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)* ballVertices.size(), ballVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(ballVertices.at(0))* ballVertices.size(), ballVertices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ballEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* ballIndices.size(), ballIndices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ballVertices.at(0)), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ballVertices.at(0)), (void*)(offsetof(BallVertex, normal)));
+    glEnableVertexAttribArray(1);
 
 
     while (!glfwWindowShouldClose(window))
@@ -277,6 +285,9 @@ int main()
         ballShader.setMat4("projection", projection);
         ballShader.setMat4("view", view);
         ballShader.setMat4("model", model);
+        ballShader.setVec3("lightPos", lightPos);
+        ballShader.setVec3("lightColor", lightColor);
+        ballShader.setVec3("viewPos", camera.Position);
         glBindVertexArray(ballVAO);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -352,10 +363,9 @@ void processInput(GLFWwindow* window)
     }
 }
 
-std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments)
+std::vector<BallVertex> genBallVertices(unsigned int nLonSegments, unsigned int nLatSegments, float radius)
 {
-	std::vector<glm::vec3> vertices;
-    std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2);
+    std::vector<BallVertex> vertices;
 
     float lonTheta, latPhi;
 
@@ -365,10 +375,15 @@ std::vector<glm::vec3> genBallVertices(unsigned int nLonSegments, unsigned int n
         for (int iLon = 0; iLon <= nLonSegments; iLon++)
         {
             lonTheta = 2 * iLon * M_PI / nLonSegments;
-            float x = cos(latPhi) * sin(lonTheta);
-            float y = sin(latPhi);
-            float z = cos(latPhi) * cos(lonTheta);
-            vertices.push_back(glm::vec3(x, y, z));
+            float vx = radius * cos(latPhi) * sin(lonTheta);
+            float vy = radius * sin(latPhi);
+            float vz = radius * cos(latPhi) * cos(lonTheta);
+            BallVertex ball = {
+                {vx, vy, vz},
+                glm::normalize(glm::vec3(vx, vy, vz)),
+                {0, 0}
+            };
+            vertices.push_back(ball);
         }
     }
 
