@@ -83,57 +83,57 @@ int main()
         //location              normal         texture
 //dice-1
        {-1.0, -1.0, 1.0,    0.0, 0.0, 1.0,    0.0, 1.0},
-       {-1.0, 1.0, 1.0,     0.0, 0.0, 1.0,    1.0, 1.0},
        {1.0, 1.0, 1.0,      0.0, 0.0, 1.0,    1.0, 0.0},
+       {-1.0, 1.0, 1.0,     0.0, 0.0, 1.0,    1.0, 1.0},
 
        {1.0, 1.0, 1.0,      0.0, 0.0, 1.0,    1.0, 0.0},
-       {1.0, -1.0, 1.0,     0.0, 0.0, 1.0,    0.0, 0.0},
        {-1.0, -1.0, 1.0,    0.0, 0.0, 1.0,    0.0, 1.0},
+       {1.0, -1.0, 1.0,     0.0, 0.0, 1.0,    0.0, 0.0},
 
 //dice-2
        {1.0, -1.0, 1.0,     1.0, 0.0, 0.0,    0.0, 1.0},
-       {1.0, 1.0, 1.0,      1.0, 0.0, 0.0,    1.0, 1.0},
        {1.0, 1.0, -1.0,     1.0, 0.0, 0.0,    1.0, 0.0},
+       {1.0, 1.0, 1.0,      1.0, 0.0, 0.0,    1.0, 1.0},
 
        {1.0, 1.0, -1.0,     1.0, 0.0, 0.0,    1.0, 0.0},
-       {1.0, -1.0, -1.0,    1.0, 0.0, 0.0,    0.0, 0.0},
        {1.0, -1.0, 1.0,     1.0, 0.0, 0.0,    0.0, 1.0},
+       {1.0, -1.0, -1.0,    1.0, 0.0, 0.0,    0.0, 0.0},
 
 //dice-3
        {1.0, -1.0, -1.0,    0.0, 0.0, -1.0,   0.0, 1.0},
-       {1.0, 1.0, -1.0,     0.0, 0.0, -1.0,   1.0, 1.0},
        {-1.0, 1.0, -1.0,    0.0, 0.0, -1.0,   1.0, 0.0},
+       {1.0, 1.0, -1.0,     0.0, 0.0, -1.0,   1.0, 1.0},
 
        {-1.0, 1.0, -1.0,    0.0, 0.0, -1.0,   1.0, 0.0},
-       {-1.0, -1.0, -1.0,   0.0, 0.0, -1.0,   0.0, 0.0},
        {1.0, -1.0, -1.0,    0.0, 0.0, -1.0,   0.0, 1.0},
+       {-1.0, -1.0, -1.0,   0.0, 0.0, -1.0,   0.0, 0.0},
 
 //dice-4
        {-1.0, -1.0, 1.0,    0.0, -1.0, 0.0,   0.0, 1.0},
-       {1.0, -1.0, 1.0,     0.0, -1.0, 0.0,   1.0, 1.0},
        {1.0, -1.0, -1.0,    0.0, -1.0, 0.0,   1.0, 0.0},
+       {1.0, -1.0, 1.0,     0.0, -1.0, 0.0,   1.0, 1.0},
 
        {1.0, -1.0, -1.0,    0.0, -1.0, 0.0,   1.0, 0.0},
-       {-1.0, -1.0, -1.0,   0.0, -1.0, 0.0,   0.0, 0.0},
        {-1.0, -1.0, 1.0,    0.0, -1.0, 0.0,   0.0, 1.0},
+       {-1.0, -1.0, -1.0,   0.0, -1.0, 0.0,   0.0, 0.0},
 
 //dice-5
        {-1.0, 1.0, 1.0,     -1.0, 0.0, 0.0,   0.0, 1.0},
-       {-1.0, -1.0, 1.0,    -1.0, 0.0, 0.0,   1.0, 1.0},
        {-1.0, -1.0, -1.0,   -1.0, 0.0, 0.0,   1.0, 0.0},
+       {-1.0, -1.0, 1.0,    -1.0, 0.0, 0.0,   1.0, 1.0},
 
        {-1.0, -1.0, -1.0,   -1.0, 0.0, 0.0,   1.0, 0.0},
-       {-1.0, 1.0, -1.0,    -1.0, 0.0, 0.0,   0.0, 0.0},
        {-1.0, 1.0, 1.0,     -1.0, 0.0, 0.0,   0.0, 1.0},
+       {-1.0, 1.0, -1.0,    -1.0, 0.0, 0.0,   0.0, 0.0},
 
 //dice-6
        {1.0, 1.0, 1.0,      0.0, 0.0, 1.0,   0.0, 1.0},
-       {-1.0, 1.0, 1.0,     0.0, 0.0, 1.0,   1.0, 1.0},
        {-1.0, 1.0, -1.0,    0.0, 0.0, 1.0,   1.0, 0.0},
+       {-1.0, 1.0, 1.0,     0.0, 0.0, 1.0,   1.0, 1.0},
 
        {-1.0, 1.0, -1.0,    0.0, 0.0, 1.0,   1.0, 0.0},
+       {1.0, 1.0, 1.0,      0.0, 0.0, 1.0,   0.0, 1.0},
        {1.0, 1.0, -1.0,     0.0, 0.0, 1.0,   0.0, 0.0},
-       {1.0, 1.0, 1.0,      0.0, 0.0, 1.0,   0.0, 1.0}
     };
 
     unsigned int lampVAO, cubeVAO, VBO;
@@ -242,7 +242,7 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0);
-        model = glm::scale(model, glm::vec3(0.1));
+        model = glm::scale(model, glm::vec3(0.9));
 
         cubeShader.setMat4("projection", projection);
         cubeShader.setMat4("view", view);
@@ -272,13 +272,17 @@ int main()
 
         ballShader.use();
         model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(1, 3, 1));
+        model = glm::translate(model, glm::vec3(0, 2, 0));
         model = glm::scale(model, glm::vec3(0.7));
         ballShader.setMat4("projection", projection);
         ballShader.setMat4("view", view);
         ballShader.setMat4("model", model);
         glBindVertexArray(ballVAO);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawElements(GL_TRIANGLES, ballIndices.size(), GL_UNSIGNED_INT, 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -380,8 +384,8 @@ std::vector<unsigned int> genBallIndices(unsigned int nLonSegments, unsigned int
         for (int iLon = 0; iLon < nLonSegments; iLon++)
         {
             indices.push_back(iLat * (nLonSegments + 1) + iLon);
-            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon);
             indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon);
 
             indices.push_back(iLat * (nLonSegments + 1) + iLon);
             indices.push_back(iLat * (nLonSegments + 1) + iLon + 1);
