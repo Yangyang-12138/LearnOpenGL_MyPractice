@@ -4,16 +4,19 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 Normal;
+in vec2 TexCoord;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform vec3 lightColor;
+uniform sampler2D nTexture;
 
 void main()
 {
-    vec3 objectColor = FragPos;
+//    vec3 objectColor = texture(nTexture, TexCoord).rgb * FragPos;
+    vec3 objectColor = texture(nTexture, TexCoord).rgb;
 
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.5;
     vec3 ambient = ambientStrength * lightColor;
 
     vec3 norm = normalize(Normal);

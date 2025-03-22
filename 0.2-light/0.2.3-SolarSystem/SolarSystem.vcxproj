@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dependence\GLAD\src\glad.c" />
+    <ClCompile Include="source\asphere.cpp" />
     <ClCompile Include="source\camera.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\asphere.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\shader.h" />
     <ClInclude Include="include\stb_image.h" />

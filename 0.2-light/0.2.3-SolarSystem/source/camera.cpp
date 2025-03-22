@@ -65,11 +65,11 @@ void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constr
 	{
 		if (Pitch > 89.999)
 		{
-			Pitch = 89.999;
+			Pitch = 89.999f;
 		}
 		if (Pitch < -89.999)
 		{
-			Pitch = -89.999;
+			Pitch = -89.999f;
 		}
 	}
 	updateCameraVectors();
@@ -81,11 +81,11 @@ void Camera::ProcessMouseScroll(float xOffset, float yOffset)
 	Zoom -= xOffset;
 	if (Zoom < 0.001)
 	{
-		Zoom = 0.001;
+		Zoom = 0.001f;
 	}
 	if (Zoom > 89.999)
 	{
-		Zoom = 89.999;
+		Zoom = 89.999f;
 	}
 }
 

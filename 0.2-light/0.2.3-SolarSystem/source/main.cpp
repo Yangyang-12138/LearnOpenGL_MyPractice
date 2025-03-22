@@ -45,7 +45,7 @@ float deltaTime = 0.0;
 float lastFrame = 0.0;
 
 glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
-glm::vec3 lightPos(1.2, 1.0, 2.0);
+glm::vec3 lightPos(-1.2, 1.0, -2.0);
 
 int main()
 {
@@ -80,6 +80,8 @@ int main()
     }
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     Shader lampShader("shaderCode/lamp.vert", "shaderCode/lamp.frag");
     Shader cubeShader("shaderCode/cube.vert", "shaderCode/cube.frag");
@@ -165,6 +167,7 @@ int main()
 
     unsigned int textures[6];
     glGenTextures(6, textures);
+    int img_width, img_height, nrChannels;
     for (int i = 0; i < sizeof(textures) / sizeof(textures[0]); i++)
     {
         glBindTexture(GL_TEXTURE_2D, textures[i]);
@@ -173,7 +176,6 @@ int main()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        int img_width, img_height, nrChannels;
         stbi_set_flip_vertically_on_load(true);
         unsigned char* data = stbi_load(
             ("../../textures/cube/dice_black-" + std::to_string(i + 1) + (".jpeg")).c_str(), 
@@ -209,9 +211,8 @@ int main()
 
 
     Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
-    std::vector<BallVertex> ballVertices = genBallVertices(128, 128, 1.5);
-    std::vector<unsigned int> ballIndices = genBallIndices(128, 128);
-    genBallIndices(5, 5);
+    std::vector<BallVertex> ballVertices = genBallVertices(1024, 1024, 1.5);
+    std::vector<unsigned int> ballIndices = genBallIndices(1024, 1024);
     unsigned int ballVAO, ballVBO, ballEBO;
     glGenVertexArrays(1, &ballVAO);
     glGenBuffers(1, &ballVBO);
@@ -225,6 +226,44 @@ int main()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ballVertices.at(0)), (void*)(offsetof(BallVertex, normal)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(ballVertices.at(0)), (void*)(offsetof(BallVertex, texturePos)));
+    glEnableVertexAttribArray(2);
+    unsigned int ballTexture;
+    glGenTextures(1, &ballTexture);
+    glBindTexture(GL_TEXTURE_2D, ballTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    stbi_set_flip_vertically_on_load(false);
+    unsigned char* data = stbi_load("../../textures/SolarTextures/earth_daymap_8k.jpg",
+        &img_width, &img_height, &nrChannels, 0);
+    if (data)
+    {
+        unsigned int format = NULL;
+        switch (nrChannels)
+        {
+        case 1:
+            format = GL_RED;
+            break;
+        case 3:
+            format = GL_RGB;
+            break;
+        case 4:
+            format = GL_RGBA;
+            break;
+        default:
+            format = GL_RGB;
+            break;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, format, img_width, img_height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture:" 
+            << "../../textures/SolarTextures/earth_daymap_8k.jpg" << std::endl;
+    }
 
 
     while (!glfwWindowShouldClose(window))
@@ -235,12 +274,12 @@ int main()
 
         processInput(window);
 
-        glClearColor(0.1, 0.1, 0.1, 1.0);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		lightPos.x = sin(1.3 * glfwGetTime()) * 2.0;
-		lightPos.y = sin(1.5 * glfwGetTime()) * 2.0;
-		lightPos.z = cos(1.7 * glfwGetTime()) * 2.0;
+		lightPos.x = sin(1.3f * (float)glfwGetTime()) * 2.0f;
+		lightPos.y = sin(1.5f * (float)glfwGetTime()) * 2.0f;
+		lightPos.z = cos(1.7f * (float)glfwGetTime()) * 2.0f;
 
         cubeShader.use();
         cubeShader.setVec3("lightColor", lightColor);
@@ -250,7 +289,7 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0);
-        model = glm::scale(model, glm::vec3(0.9));
+        model = glm::scale(model, glm::vec3(0.9f));
 
         cubeShader.setMat4("projection", projection);
         cubeShader.setMat4("view", view);
@@ -270,29 +309,29 @@ int main()
         lampShader.setVec3("lightColor", lightColor);
         model = glm::mat4(1.0);
         model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.1));
+        model = glm::scale(model, glm::vec3(0.1f));
         lampShader.setMat4("projection", projection);
         lampShader.setMat4("view", view);
         lampShader.setMat4("model", model);
-
         glBindVertexArray(lampVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         ballShader.use();
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(0, 2, 0));
-        model = glm::scale(model, glm::vec3(0.7));
+        model = glm::scale(model, glm::vec3(0.7f));
         ballShader.setMat4("projection", projection);
         ballShader.setMat4("view", view);
         ballShader.setMat4("model", model);
         ballShader.setVec3("lightPos", lightPos);
         ballShader.setVec3("lightColor", lightColor);
         ballShader.setVec3("viewPos", camera.Position);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, ballTexture);
+        ballShader.setInt("nTexture", 0);
         glBindVertexArray(ballVAO);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glDrawElements(GL_TRIANGLES, ballIndices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, GLsizei(ballIndices.size()), GL_UNSIGNED_INT, 0);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glfwSwapBuffers(window);
@@ -335,7 +374,7 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
 {
-    camera.ProcessMouseScroll(xOffset, yOffset);
+    camera.ProcessMouseScroll((float)xOffset, (float)yOffset);
 }
 
 void processInput(GLFWwindow* window)
@@ -369,19 +408,19 @@ std::vector<BallVertex> genBallVertices(unsigned int nLonSegments, unsigned int 
 
     float lonTheta, latPhi;
 
-    for (int iLat = 0; iLat <= nLatSegments; iLat++)
+    for (unsigned int iLat = 0; iLat <= nLatSegments; iLat++)
     {
-        latPhi = iLat * M_PI / nLatSegments - M_PI / 2;
-        for (int iLon = 0; iLon <= nLonSegments; iLon++)
+        latPhi = (float)(iLat * M_PI / nLatSegments - M_PI / 2);
+        for (unsigned int iLon = 0; iLon <= nLonSegments; iLon++)
         {
-            lonTheta = 2 * iLon * M_PI / nLonSegments;
+            lonTheta = (float)(2 * iLon * M_PI / nLonSegments);
             float vx = radius * cos(latPhi) * sin(lonTheta);
             float vy = radius * sin(latPhi);
             float vz = radius * cos(latPhi) * cos(lonTheta);
             BallVertex ball = {
                 {vx, vy, vz},
                 glm::normalize(glm::vec3(vx, vy, vz)),
-                {0, 0}
+                {(float)iLon / nLonSegments, 1.0 - (float)iLat / nLatSegments},
             };
             vertices.push_back(ball);
         }
@@ -394,9 +433,9 @@ std::vector<unsigned int> genBallIndices(unsigned int nLonSegments, unsigned int
 {
     std::vector<unsigned int> indices;
 
-    for (int iLat = 0; iLat < nLatSegments; iLat++)
+    for (unsigned int iLat = 0; iLat < nLatSegments; iLat++)
     {
-        for (int iLon = 0; iLon < nLonSegments; iLon++)
+        for (unsigned int iLon = 0; iLon < nLonSegments; iLon++)
         {
             indices.push_back(iLat * (nLonSegments + 1) + iLon);
             indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
