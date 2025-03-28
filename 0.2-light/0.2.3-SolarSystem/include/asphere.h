@@ -32,17 +32,21 @@ public:
     Shader* shader;
 
     void setRadius(float r);
-    void setTexture(const char* texPath);
+    void setTexture(const char* texPath, bool vFlip = false);
     void setSegments(unsigned int nLon = 8, unsigned int nLat = 8);
     void setShader(const char* vertexShaderPath, const char* fragmentShaderPath);
     void drawMe();
 
 private:
+    unsigned char* textureData;
     const char* vShaderPath;
     const char* fShaderPath;
     const char* texturePath;
     unsigned int nLonSegments;
     unsigned int nLatSegments;
+    int img_width;
+    int img_height;
+    int nrChannel;
     float radius;
 
     std::vector<glm::vec3> vertexPos;
