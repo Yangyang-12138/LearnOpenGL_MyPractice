@@ -44,14 +44,11 @@ private:
     const char* texturePath;
     unsigned int nLonSegments;
     unsigned int nLatSegments;
-    int img_width;
-    int img_height;
-    int nrChannel;
     float radius;
+    unsigned int VAO, VBO, EBO;
+    unsigned int texture;
 
-    std::vector<glm::vec3> vertexPos;
-    std::vector<glm::vec3> normal;
-    std::vector<glm::vec2> texCoord;
+    std::vector<SphereVertex> vertices;
     std::vector<unsigned int > indices;
 
     void genVertices(unsigned int nLon, unsigned int nLat, float r);

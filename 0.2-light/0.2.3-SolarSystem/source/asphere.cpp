@@ -9,10 +9,15 @@ aSphere::aSphere()
     texturePath(NULL),
     nLonSegments(8),
     nLatSegments(8),
-    img_width(0),
-    img_height(0),
-    nrChannel(0)
+    texture(0)
 {
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 }
 
 aSphere::~aSphere()
@@ -33,6 +38,18 @@ void aSphere::setRadius(float r)
 
 void aSphere::setTexture(const char* texPath, bool vFlip)
 {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int img_width, img_height, nrChannel;
     texturePath = texPath;
     stbi_set_flip_vertically_on_load(vFlip);
     textureData = stbi_load(texturePath, &img_width, &img_height, &nrChannel, 0);
@@ -67,6 +84,19 @@ void aSphere::setSegments(unsigned int nLon, unsigned int nLat)
 {
     genVertices(nLon, nLat, radius);
     genIndices(nLon, nLat);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(VBO, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex), (void*)(offsetof(SphereVertex, normal)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SphereVertex), (void*)(offsetof(SphereVertex, texturePos)));
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(EBO, sizeof(indices), indices.data(), GL_STATIC_DRAW);
 }
 
 void aSphere::setShader(const char* vertexShaderPath, const char* fragmentShaderPath)
@@ -84,12 +114,55 @@ void aSphere::setShader(const char* vertexShaderPath, const char* fragmentShader
 
 void aSphere::drawMe()
 {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    shader->setInt("nTexture", 0);
+    glBindVertexArray(VAO);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawElements(GL_TRIANGLES, GLsizei(indices.size()), GL_UNSIGNED_INT, 0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void aSphere::genVertices(unsigned int nLon, unsigned int nLat, float r)
 {
+    vertices.clear();
+
+    float lonTheta, latPhi;
+
+    for (unsigned int iLat = 0; iLat <= nLatSegments; iLat++)
+    {
+        latPhi = (float)(iLat * M_PI / nLatSegments - M_PI / 2);
+        for (unsigned int iLon = 0; iLon <= nLonSegments; iLon++)
+        {
+            lonTheta = (float)(2 * iLon * M_PI / nLonSegments);
+            float vx = radius * cos(latPhi) * sin(lonTheta);
+            float vy = radius * sin(latPhi);
+            float vz = radius * cos(latPhi) * cos(lonTheta);
+            SphereVertex ball = {
+                {vx, vy, vz},
+                glm::normalize(glm::vec3(vx, vy, vz)),
+                {(float)iLon / nLonSegments, 1.0 - (float)iLat / nLatSegments},
+            };
+            vertices.push_back(ball);
+        }
+    }
 }
 
 void aSphere::genIndices(unsigned int nLon, unsigned int nLat)
 {
+    indices.clear();
+
+    for (unsigned int iLat = 0; iLat < nLatSegments; iLat++)
+    {
+        for (unsigned int iLon = 0; iLon < nLonSegments; iLon++)
+        {
+            indices.push_back(iLat * (nLonSegments + 1) + iLon);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon);
+
+            indices.push_back(iLat * (nLonSegments + 1) + iLon);
+            indices.push_back(iLat * (nLonSegments + 1) + iLon + 1);
+            indices.push_back((iLat + 1) * (nLonSegments + 1) + iLon + 1);
+        }
+    }
 }

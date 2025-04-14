@@ -7,6 +7,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "asphere.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -46,6 +47,9 @@ float lastFrame = 0.0;
 
 glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
 glm::vec3 lightPos(-1.2, 1.0, -2.0);
+
+unsigned int nLon = 512;
+unsigned int nLat = 512;
 
 int main()
 {
@@ -211,8 +215,8 @@ int main()
 
 
     Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
-    std::vector<BallVertex> ballVertices = genBallVertices(1024, 1024, 1.5);
-    std::vector<unsigned int> ballIndices = genBallIndices(1024, 1024);
+    std::vector<BallVertex> ballVertices = genBallVertices(nLon, nLat, 1.5);
+    std::vector<unsigned int> ballIndices = genBallIndices(nLon, nLat);
     unsigned int ballVAO, ballVBO, ballEBO;
     glGenVertexArrays(1, &ballVAO);
     glGenBuffers(1, &ballVBO);
@@ -265,6 +269,11 @@ int main()
             << "../../textures/SolarTextures/earth_daymap_8k.jpg" << std::endl;
     }
 
+    aSphere aBall;
+    aBall.setRadius(1.0);
+    aBall.setShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
+    aBall.setSegments(32, 32);
+    aBall.setTexture("../../textures/SolarTextures/earth_clouds_8k.jpg");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -333,6 +342,18 @@ int main()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawElements(GL_TRIANGLES, GLsizei(ballIndices.size()), GL_UNSIGNED_INT, 0);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        model = glm::mat4(1.0);
+        model = glm::translate(model, glm::vec3(0, 3, 0));
+        model = glm::scale(model, glm::vec3(1.0f));
+        aBall.shader->use();
+        aBall.shader->setMat4("projection", projection);
+        aBall.shader->setMat4("view", view);
+        aBall.shader->setMat4("model", model);
+        aBall.shader->setVec3("lightPos", lightPos);
+        aBall.shader->setVec3("lightColor", lightColor);
+		aBall.shader->setVec3("viewPos", camera.Position);
+        aBall.drawMe();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
