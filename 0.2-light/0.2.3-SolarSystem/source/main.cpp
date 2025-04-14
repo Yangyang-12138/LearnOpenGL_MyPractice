@@ -48,8 +48,8 @@ float lastFrame = 0.0;
 glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
 glm::vec3 lightPos(-1.2, 1.0, -2.0);
 
-unsigned int nLon = 512;
-unsigned int nLat = 512;
+unsigned int nLon = 128;
+unsigned int nLat = 128;
 
 int main()
 {
@@ -272,8 +272,8 @@ int main()
     aSphere aBall;
     aBall.setRadius(1.0);
     aBall.setShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
-    aBall.setSegments(32, 32);
-    aBall.setTexture("../../textures/SolarTextures/earth_clouds_8k.jpg");
+    aBall.setSegments(nLon, nLat);
+    aBall.setTexture("../../textures/SolarTextures/sun_8k.jpg");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -327,7 +327,7 @@ int main()
 
         ballShader.use();
         model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(0, 2, 0));
+        model = glm::translate(model, glm::vec3(0, 1.5, 0));
         model = glm::scale(model, glm::vec3(0.7f));
         ballShader.setMat4("projection", projection);
         ballShader.setMat4("view", view);
@@ -344,7 +344,7 @@ int main()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(0, 3, 0));
+        model = glm::translate(model, glm::vec3(0, 4, 0));
         model = glm::scale(model, glm::vec3(1.0f));
         aBall.shader->use();
         aBall.shader->setMat4("projection", projection);

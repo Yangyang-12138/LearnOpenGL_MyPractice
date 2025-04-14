@@ -1,15 +1,6 @@
 #include "asphere.h"
 
 aSphere::aSphere()
-    :shader(NULL),
-    radius(1.0f),
-    textureData(NULL),
-    vShaderPath(NULL),
-    fShaderPath(NULL),
-    texturePath(NULL),
-    nLonSegments(8),
-    nLatSegments(8),
-    texture(0)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -22,6 +13,9 @@ aSphere::aSphere()
 
 aSphere::~aSphere()
 {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 
 void aSphere::setRadius(float r)
@@ -87,7 +81,7 @@ void aSphere::setSegments(unsigned int nLon, unsigned int nLat)
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(VBO, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex), (void*)(offsetof(SphereVertex, normal)));
@@ -96,7 +90,7 @@ void aSphere::setSegments(unsigned int nLon, unsigned int nLat)
     glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(EBO, sizeof(indices), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
 }
 
 void aSphere::setShader(const char* vertexShaderPath, const char* fragmentShaderPath)
@@ -114,6 +108,10 @@ void aSphere::setShader(const char* vertexShaderPath, const char* fragmentShader
 
 void aSphere::drawMe()
 {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     shader->setInt("nTexture", 0);
@@ -123,7 +121,7 @@ void aSphere::drawMe()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void aSphere::genVertices(unsigned int nLon, unsigned int nLat, float r)
+void aSphere::genVertices(unsigned int nLonSegments, unsigned int nLatSegments, float r)
 {
     vertices.clear();
 
@@ -148,7 +146,7 @@ void aSphere::genVertices(unsigned int nLon, unsigned int nLat, float r)
     }
 }
 
-void aSphere::genIndices(unsigned int nLon, unsigned int nLat)
+void aSphere::genIndices(unsigned int nLonSegments, unsigned int nLatSegments)
 {
     indices.clear();
 

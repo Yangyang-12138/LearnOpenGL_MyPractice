@@ -42,8 +42,6 @@ private:
     const char* vShaderPath;
     const char* fShaderPath;
     const char* texturePath;
-    unsigned int nLonSegments;
-    unsigned int nLatSegments;
     float radius;
     unsigned int VAO, VBO, EBO;
     unsigned int texture;
