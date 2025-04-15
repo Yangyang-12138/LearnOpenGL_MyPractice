@@ -323,6 +323,7 @@ int main()
     for (int i = 0; i < 17; i++)
     {
         solarSys[i].setRadius(1.0);
+        std::cout << "i = " << i;
         solarSys[i].setShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
         solarSys[i].setSegments(nLon, nLat);
         solarSys[i].setTexture(solarSysTextures[i]);
