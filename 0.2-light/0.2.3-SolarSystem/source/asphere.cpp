@@ -5,10 +5,6 @@ aSphere::aSphere()
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 }
 
 aSphere::~aSphere()
@@ -116,9 +112,7 @@ void aSphere::drawMe()
     glBindTexture(GL_TEXTURE_2D, texture);
     shader->setInt("nTexture", 0);
     glBindVertexArray(VAO);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, GLsizei(indices.size()), GL_UNSIGNED_INT, 0);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void aSphere::genVertices(unsigned int nLonSegments, unsigned int nLatSegments, float r)

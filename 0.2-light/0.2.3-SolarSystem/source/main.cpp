@@ -48,8 +48,49 @@ float lastFrame = 0.0;
 glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
 glm::vec3 lightPos(-1.2, 1.0, -2.0);
 
-unsigned int nLon = 128;
-unsigned int nLat = 128;
+unsigned int nLon = 512;
+unsigned int nLat = 512;
+
+//unsigned int nPlant = 17;
+const char* solarSysTextures[17] = {
+    "../../textures/SolarTextures/ceres_fictional_4k.jpg",
+    "../../textures/SolarTextures/earth_clouds_8k.jpg",
+    "../../textures/SolarTextures/earth_daymap_8k.jpg",
+    "../../textures/SolarTextures/earth_nightmap_8k.jpg",
+    "../../textures/SolarTextures/eris_fictional_4k.jpg",
+    "../../textures/SolarTextures/haumea_fictional_4k.jpg",
+    "../../textures/SolarTextures/jupiter_8k.jpg",
+    "../../textures/SolarTextures/makemake_fictional_4k.jpg",
+    "../../textures/SolarTextures/mars_8k.jpg",
+    "../../textures/SolarTextures/mercury_8k.jpg",
+    "../../textures/SolarTextures/moon_8k.jpg",
+    "../../textures/SolarTextures/neptune_2k.jpg",
+    "../../textures/SolarTextures/saturn_8k.jpg",
+    "../../textures/SolarTextures/moon_8k.jpg",
+    "../../textures/SolarTextures/sun_8k.jpg",
+    "../../textures/SolarTextures/venus_atmosphere_4k.jpg",
+    "../../textures/SolarTextures/venus_surface_8k.jpg"
+};
+
+glm::mat4 solarSysPos[17] = {
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 0, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 3, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 6, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 9, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 12, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 15, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 18, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 21, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 24, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 27, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 30, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 33, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 36, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 39, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 42, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 45, 0)),
+    glm::translate(glm::mat4(1.0), glm::vec3(3, 48, 0)),
+};
 
 int main()
 {
@@ -87,6 +128,7 @@ int main()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    //Dice & light
     Shader lampShader("shaderCode/lamp.vert", "shaderCode/lamp.frag");
     Shader cubeShader("shaderCode/cube.vert", "shaderCode/cube.frag");
 
@@ -213,7 +255,7 @@ int main()
         }
     }
 
-
+    //a Ball
     Shader ballShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
     std::vector<BallVertex> ballVertices = genBallVertices(nLon, nLat, 1.5);
     std::vector<unsigned int> ballIndices = genBallIndices(nLon, nLat);
@@ -269,11 +311,22 @@ int main()
             << "../../textures/SolarTextures/earth_daymap_8k.jpg" << std::endl;
     }
 
+    //another ball
     aSphere aBall;
     aBall.setRadius(1.0);
     aBall.setShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
     aBall.setSegments(nLon, nLat);
-    aBall.setTexture("../../textures/SolarTextures/sun_8k.jpg");
+    aBall.setTexture("../../textures/SolarTextures/haumea_fictional_4k.jpg");
+
+    //SolarSys    
+    aSphere solarSys[17];
+    for (int i = 0; i < 17; i++)
+    {
+        solarSys[i].setRadius(1.0);
+        solarSys->setShader("shaderCode/firstBall.vert", "shaderCode/firstBall.frag");
+        solarSys->setSegments(nLon, nLat);
+        solarSys->setTexture(solarSysTextures[i]);
+    }
 
     while (!glfwWindowShouldClose(window))
     {
@@ -345,7 +398,6 @@ int main()
 
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(0, 4, 0));
-        model = glm::scale(model, glm::vec3(1.0f));
         aBall.shader->use();
         aBall.shader->setMat4("projection", projection);
         aBall.shader->setMat4("view", view);
@@ -353,7 +405,24 @@ int main()
         aBall.shader->setVec3("lightPos", lightPos);
         aBall.shader->setVec3("lightColor", lightColor);
 		aBall.shader->setVec3("viewPos", camera.Position);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         aBall.drawMe();
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        for (int i = 0; i < 17; i++)
+        {
+            solarSys->shader->use();
+            solarSys->shader->setMat4("projection", projection);
+            solarSys->shader->setMat4("view", view);
+            solarSys->shader->setMat4("model", solarSysPos[i]);
+            solarSys->shader->setVec3("lightPos", lightPos);
+            solarSys->shader->setVec3("lightColor", lightColor);
+            solarSys->shader->setVec3("viewPos", camera.Position);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            solarSys->drawMe();
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
