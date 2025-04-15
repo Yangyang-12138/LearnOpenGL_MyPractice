@@ -16,7 +16,7 @@ void main()
 //    vec3 objectColor = texture(nTexture, TexCoord).rgb * FragPos;
     vec3 objectColor = texture(nTexture, TexCoord).rgb;
 
-    float ambientStrength = 0.5;
+    float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
 
     vec3 norm = normalize(Normal);

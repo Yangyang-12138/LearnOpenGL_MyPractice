@@ -1,10 +1,12 @@
 #include "asphere.h"
 
 aSphere::aSphere()
+	:shader(NULL)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+
 }
 
 aSphere::~aSphere()
@@ -12,6 +14,12 @@ aSphere::~aSphere()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+
+    if (shader)
+    {
+        delete shader;
+        shader = NULL;
+    }
 }
 
 void aSphere::setRadius(float r)

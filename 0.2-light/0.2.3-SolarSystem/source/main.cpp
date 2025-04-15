@@ -48,8 +48,8 @@ float lastFrame = 0.0;
 glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.6);
 glm::vec3 lightPos(-1.2, 1.0, -2.0);
 
-unsigned int nLon = 512;
-unsigned int nLat = 512;
+unsigned int nLon = 256;
+unsigned int nLat = 256;
 
 //unsigned int nPlant = 17;
 const char* solarSysTextures[17] = {
@@ -409,6 +409,7 @@ int main()
         aBall.drawMe();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         for (int i = 0; i < 17; i++)
         {
             solarSys[i].shader->use();
@@ -418,11 +419,9 @@ int main()
             solarSys[i].shader->setVec3("lightPos", lightPos);
             solarSys[i].shader->setVec3("lightColor", lightColor);
             solarSys[i].shader->setVec3("viewPos", camera.Position);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             solarSys[i].drawMe();
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
